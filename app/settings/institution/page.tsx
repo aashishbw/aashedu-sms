@@ -36,8 +36,8 @@ export default async function InstitutionSettings({searchParams}:{searchParams:P
         {fields.map(([key,label,length,type]) => <label key={key}>{label}<input name={key} type={type ?? "text"} maxLength={length}
           required={["name","currency","timezone"].includes(key)}
           defaultValue={profile?.[key] ?? (key==="currency" ? defaultCurrency : key==="timezone" ? "Asia/Kathmandu" : "")}/></label>)}
-        <label>Primary theme color<input type="color" name="primaryColor" defaultValue={color(profile?.primaryColor,"#2357d8")}/></label>
-        <label>Secondary theme color<input type="color" name="secondaryColor" defaultValue={color(profile?.secondaryColor,"#eaf0ff")}/></label>
+        <label>Primary theme color<input type="color" name="primaryColor" defaultValue={color(profile?.primaryColor,"#1465b8")}/></label>
+        <label>Secondary theme color<input type="color" name="secondaryColor" defaultValue={color(profile?.secondaryColor,"#9dd6ff")}/></label>
       </div>
       {profile?.hasLogo && <img className="institution-logo" src="/api/institution/logo" alt="Current institution logo" width={48} height={48}/>}
       <label>Institution logo (PNG or JPEG, up to 2 MB)<input type="file" name="logo" accept="image/png,image/jpeg"/></label>
