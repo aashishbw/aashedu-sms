@@ -2,8 +2,8 @@ import { publicBranding } from "../../lib/institution";
 import { InstitutionMark } from "../institution-brand";
 import { login } from "./actions";
 
-export default async function Login({ searchParams }: { searchParams: Promise<{ error?: string }> }) {
-  const [{error},brand]=await Promise.all([searchParams,publicBranding()]);
+export default async function Login({ searchParams }: { searchParams: Promise<{ error?: string; changed?: string }> }) {
+  const [{error,changed},brand]=await Promise.all([searchParams,publicBranding()]);
   return <main className="login">
     <section className="login-identity" aria-labelledby="login-institution">
       <InstitutionMark logoUrl={brand.logoUrl}/>
@@ -13,6 +13,7 @@ export default async function Login({ searchParams }: { searchParams: Promise<{ 
     <section className="login-panel" aria-labelledby="login-title">
       <div className="login-form">
         <h2 id="login-title">Sign in</h2>
+        {changed === "1" && <p className="success" role="status">Password changed. Sign in with your new password.</p>}
         {error && <p role="alert" className="alert">{error === "limited" ? "Too many attempts. Try again in 15 minutes." : "Sign-in failed. Check your email and password."}</p>}
         <form action={login} className="stack">
           <label>Email<input name="email" type="email" required autoComplete="username"/></label>

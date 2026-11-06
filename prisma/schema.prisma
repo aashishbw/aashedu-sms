@@ -610,3 +610,13 @@ model Payroll {
   @@unique([employeeId,period])
   @@index([archived,createdAt])
 }
+
+model InstitutionRegistration {
+  id                 String   @id @default(cuid())
+  name               String
+  type               String
+  registrationNumber String   @unique
+  contactEmail       String
+  loginUrl           String?
+  createdAt          DateTime @default(now())
+}

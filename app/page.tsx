@@ -8,7 +8,8 @@ import { db } from "../lib/db";
 import { isAdmin } from "../lib/permissions";
 import { CountsChart } from "./charts";
 import { Shell } from "./shell";
-export default async function Overview() {
+export default async function Overview({searchParams}:{searchParams:Promise<{changePassword?:string}>}) {
+  const {changePassword}=await searchParams;
   const user = await requireUser();
   const admin = isAdmin(user.role);
   const [announcements, settings] = await Promise.all([
@@ -42,7 +43,15 @@ export default async function Overview() {
     {label:"Fees collected",value:format(paid),icon:CreditCard,key:"payments"},
     {label:"Outstanding fees",value:format(outstanding),icon:CreditCard,key:"fees"}
   ] : [];
-  return <Shell user={user}>
+  return <Shell user={user} promptPassword={changePassword === "1" ? user.id : undefined}>
+    {admin && (!settings?.name?.trim() || !settings?.registrationNumber?.trim()) && (
+      <section className="card" aria-labelledby="institution-setup">
+        <p className="eyebrow">Getting started</p>
+        <h2 id="institution-setup">Set up your school or college</h2>
+        <p className="muted">Enter your institution’s name and registration number. You can also add its logo and colors.</p>
+        <Link className="button" href="/settings/institution">Open Institution Profile</Link>
+      </section>
+    )}
     <div className="page-head"><div><p className="eyebrow">{settings?.name || defaultName}</p><h1>School overview</h1><p className="muted">Welcome back, {user.name}.</p></div>
       {admin && <Link className="button" href="/modules/students?add=1">New admission <ArrowUpRight size={16}/></Link>}</div>
     {admin && <section className="card"><h2>Management areas</h2>

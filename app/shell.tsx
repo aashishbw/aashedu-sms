@@ -3,6 +3,7 @@ import { LayoutDashboard, LogOut, ChevronDown } from "lucide-react";
 import type { Role } from "@prisma/client";
 import { publicBranding, readInstitution } from "../lib/institution";
 import { InstitutionMark } from "./institution-brand";
+import { ChangePassword } from "./change-password";
 import { logout } from "./login/actions";
 import { catalog } from "../lib/catalog";
 import { canRead, isAdmin } from "../lib/permissions";
@@ -12,7 +13,7 @@ const groups: Record<string, string[]> = {
   "HRMS & Payroll": ["employees","staff-attendance","leave","payroll"],
   "Operations": ["fee-categories","fee-structures","fees","payments","books","loans","vehicles","transport","riders","communication"]
 };
-export async function Shell({ user, active, children }: { user: {name: string; role: Role}; active?: string; children: React.ReactNode }) {
+export async function Shell({ user, active, children, promptPassword }: { user: {name: string; role: Role}; active?: string; children: React.ReactNode; promptPassword?:string }) {
   const [brand,profile]=await Promise.all([publicBranding(),readInstitution()]);
   return <div className="frame">
     <aside><Link href="/" className="brand"><InstitutionMark logoUrl={brand.logoUrl}/><strong className="institution-name">{profile?.shortName || brand.name}</strong></Link>
@@ -26,11 +27,12 @@ export async function Shell({ user, active, children }: { user: {name: string; r
       })}
       <Link className={active === "reports" ? "active" : ""} href="/reports">Reports</Link>
       {isAdmin(user.role) && <Link className={active === "institution" ? "active" : ""} href="/settings/institution">Admin settings · Institution Profile</Link>}
+      {user.role === "SUPER_ADMIN" && <Link className={active === "institutions" ? "active" : ""} href="/institutions">Schools &amp; Colleges</Link>}
       {isAdmin(user.role) && <Link className={active === "users" ? "active" : ""} href="/users">User accounts</Link>}
       </nav></details>
     </aside>
     <div className="workspace">
-      <header><strong className="institution-name">{brand.name}</strong><div><span><strong>{user.name}</strong><small>{user.role.toLowerCase().replaceAll("_", " ")}</small></span><form action={logout}><button className="icon secondary" aria-label="Sign out"><LogOut size={17}/></button></form></div></header>
+      <header><strong className="institution-name">{brand.name}</strong><div><span><strong>{user.name}</strong><small>{user.role.toLowerCase().replaceAll("_", " ")}</small></span><ChangePassword prompt={promptPassword}/><form action={logout}><button className="icon secondary" aria-label="Sign out"><LogOut size={17}/></button></form></div></header>
       <main className="content"><div className="print-institution">
         <InstitutionMark logoUrl={brand.logoUrl}/><div><strong>{brand.name}</strong>
         <p>{[profile?.address,profile?.phone,profile?.email,profile?.website].filter(Boolean).join(" | ")}</p></div>

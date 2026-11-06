@@ -42,3 +42,6 @@ button.secondary,.button.secondary{background:var(--surface);color:var(--text)}
   }
 }
 @media print{.print-institution{display:flex;align-items:center;gap:12px;border-bottom:1px solid #aaa;padding-bottom:10px}.print-institution p{overflow-wrap:anywhere}}
+
+.password-dialog{margin:auto;width:min(calc(100% - 2rem),26rem);color:var(--text)}
+.password-dialog::backdrop{background:rgb(0 0 0 / .55)}
