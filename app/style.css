@@ -87,3 +87,12 @@ button.secondary,.button.secondary{background:var(--surface);color:var(--text)}
 
 .password-dialog{margin:auto;width:min(calc(100% - 2rem),26rem);color:var(--text)}
 .password-dialog::backdrop{background:rgb(0 0 0 / .55)}
+
+.dashboard-metrics { grid-template-columns:repeat(auto-fit,minmax(min(100%,170px),1fr)) }
+.dashboard-metrics .tile { grid-template-columns:minmax(0,1fr) auto;align-items:center }
+.dashboard-metrics .tile strong { display:block;overflow-wrap:anywhere }
+.dashboard-insights { display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr);gap:14px }
+.dashboard-identity { display:grid;align-content:center;justify-items:start;gap:1rem;background:var(--soft) }
+.dashboard-identity .institution-logo { background:var(--surface);color:var(--brand);padding:.4rem }
+.dashboard-shortcut-grid { display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,160px),1fr));gap:.5rem }
+@media(max-width:850px) { .dashboard-insights { grid-template-columns:minmax(0,1fr) } }

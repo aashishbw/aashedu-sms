@@ -7,6 +7,7 @@ import { requireUser } from "../lib/auth";
 import { db } from "../lib/db";
 import { isAdmin } from "../lib/permissions";
 import { CountsChart } from "./charts";
+import { InstitutionMark } from "./institution-brand";
 import { Shell } from "./shell";
 export default async function Overview({searchParams}:{searchParams:Promise<{changePassword?:string}>}) {
   const {changePassword}=await searchParams;
@@ -54,17 +55,29 @@ export default async function Overview({searchParams}:{searchParams:Promise<{cha
     )}
     <div className="page-head"><div><p className="eyebrow">{settings?.name || defaultName}</p><h1>School overview</h1><p className="muted">Welcome back, {user.name}.</p></div>
       {admin && <Link className="button" href="/modules/students?add=1">New admission <ArrowUpRight size={16}/></Link>}</div>
-    {admin && <section className="card"><h2>Management areas</h2>
+    {admin && <><div className="tiles dashboard-metrics">{tiles.map(({label,value,icon:Icon,key}) => <Link className="card tile" href={"/modules/" + key} key={key}>
+      <span><span className="muted">{label}</span><strong>{value}</strong></span><span className="tile-icon"><Icon size={20}/></span></Link>)}</div>
+      <div className="dashboard-insights">
+        <CountsChart title="Attendance today" data={stats?.[4].map(row=>({label:row.status,value:row._count})) ?? []}/>
+        <section className="card dashboard-identity" aria-labelledby="dashboard-institution">
+          <InstitutionMark logoUrl={settings?.hasLogo ? "/api/institution/logo" : null}/>
+          <div>
+            <p className="eyebrow">{settings?.institutionType ?? "Institution"}</p>
+            <h2 id="dashboard-institution" className="institution-name">{settings?.name || defaultName}</h2>
+            {settings?.registrationNumber && <p className="muted">Registration {settings.registrationNumber}</p>}
+            {settings?.academicYear && <p className="muted">Academic year {settings.academicYear}</p>}
+          </div>
+          <Link href="/settings/institution">Institution Profile</Link>
+        </section>
+      </div>
+      <div className="panels"><section className="card"><h2>Recent admissions</h2>{students.length ? students.map(s => <div className="line" key={s.id}><strong>{s.name}</strong><span>{s.status}</span></div>) : <p className="muted">No admissions yet.</p>}</section>
+      <section className="card"><h2>Upcoming examinations</h2>{exams.length ? exams.map(e => <div className="line" key={e.id}><strong>{e.name}</strong><span>{e.day.toISOString().slice(0,10)}</span></div>) : <p className="muted">No scheduled examinations.</p>}</section></div></>}
+    {admin && <section className="card dashboard-shortcuts"><h2>Management areas</h2><div className="dashboard-shortcut-grid">
       <div className="line"><Link href="/modules/students">Student Management</Link></div>
       <div className="line"><Link href="/modules/exams">Exam Management</Link></div>
       <div className="line"><Link href="/modules/employees">Staff Management</Link></div>
       <div className="line"><Link href="/modules/payroll">Payroll Management</Link></div>
-    </section>}
-    {admin && <><div className="tiles">{tiles.map(({label,value,icon:Icon,key}) => <Link className="card tile" href={"/modules/" + key} key={key}>
-      <span className="tile-icon"><Icon size={20}/></span><span className="muted">{label}</span><strong>{value}</strong></Link>)}</div>
-      <CountsChart title="Attendance today" data={stats?.[4].map(row=>({label:row.status,value:row._count})) ?? []}/>
-      <div className="panels"><section className="card"><h2>Recent admissions</h2>{students.length ? students.map(s => <div className="line" key={s.id}><strong>{s.name}</strong><span>{s.status}</span></div>) : <p className="muted">No admissions yet.</p>}</section>
-      <section className="card"><h2>Upcoming examinations</h2>{exams.length ? exams.map(e => <div className="line" key={e.id}><strong>{e.name}</strong><span>{e.day.toISOString().slice(0,10)}</span></div>) : <p className="muted">No scheduled examinations.</p>}</section></div></>}
+    </div></section>}
     <section className="card"><h2>School announcements</h2>{announcements.length ? announcements.map(a => <article className="announcement" key={a.id}><strong>{a.title}</strong><p>{a.body}</p></article>) : <p className="muted">No school-wide announcements.</p>}</section>
   </Shell>;
 }
