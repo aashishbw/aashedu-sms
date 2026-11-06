@@ -9,24 +9,66 @@ button,.button{display:inline-flex;gap:7px;align-items:center;justify-content:ce
 @media print{.frame{display:block}aside,header,button,.button,.search,.pagination{display:none!important}.card{box-shadow:none}.content{padding:0}}
 .institution-logo{display:inline-grid;place-items:center;flex:none;object-fit:contain;width:42px;height:42px;border-radius:8px}
 .institution-name{min-width:0;overflow-wrap:anywhere}
-.login{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);min-height:100vh;color-scheme:light}
-.login-identity,.login-panel{display:grid;align-content:center;justify-items:center;padding:clamp(1.5rem,5vw,5rem)}
-.login-identity{background:#fafaf8;color:#243568;text-align:center;gap:1rem}
-.login-identity .institution-logo{width:clamp(4rem,12vw,8rem);height:clamp(4rem,12vw,8rem)}
-.login-identity .institution-logo svg{width:50%;height:50%}
-.login .institution-name{font-size:clamp(1.5rem,3vw,2.5rem);line-height:1.2;margin:0}
-.login-panel{background:var(--login-panel,#243568);color:#fff}
-.login-form{width:min(100%,25rem)}
-.login-form h2{font-size:1.6rem}
-.login-form input{background:color-mix(in srgb,var(--login-panel,#243568) 92%,#fff);border-color:var(--login-accent,#9dd6ff);color:#fff}
-.login-form button{justify-self:start;background:var(--institution-primary,#1465b8);color:var(--institution-button-text,#fff);padding-inline:1.4rem}
-.login-form :focus-visible{outline-color:var(--login-accent,#9dd6ff)}
-.login-credit{color:var(--login-accent,#9dd6ff)}
-@media(max-width:680px){
-  .login{grid-template-columns:minmax(0,1fr);grid-template-rows:auto 1fr}
-  .login-identity,.login-panel{padding:2rem 1.25rem}
+.login {
+  display:grid;
+  place-items:center;
+  min-height:100dvh;
+  padding:clamp(1rem,4vw,3rem);
+  background:#edf2f8;
+  color-scheme:light;
 }
-.login-credit{text-align:center;margin-top:1rem;font-size:.8rem}
+.login-card {
+  display:grid;
+  grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);
+  grid-template-areas:"form identity";
+  width:min(100%,58rem);
+  min-height:29rem;
+  overflow:hidden;
+  border:1px solid #dce3ed;
+  border-radius:1.5rem;
+  box-shadow:0 16px 44px #24356818;
+}
+.login-identity,.login-panel {
+  display:grid;
+  align-content:center;
+  justify-items:center;
+  padding:clamp(1.5rem,5vw,3.5rem);
+}
+.login-identity {
+  grid-area:identity;
+  background:var(--login-panel,#243568);
+  color:#fff;
+  text-align:center;
+  gap:.75rem;
+}
+.login-identity .institution-logo {
+  width:5.5rem;
+  height:5.5rem;
+  padding:.65rem;
+  background:#fff;
+  color:#243568;
+  border-radius:1.1rem;
+}
+.login-identity .institution-logo svg { width:50%;height:50% }
+.login .institution-name { font-size:clamp(1.5rem,3vw,2.25rem);line-height:1.2;margin:0 }
+.login-identity p { color:var(--login-accent,#9dd6ff) }
+.login-panel { grid-area:form;background:#fff;color:#17253a }
+.login-form { width:min(100%,24rem) }
+.login-form h2 { font-size:1.85rem;margin-bottom:.25rem }
+.login-intro,.login-credit { color:#55647a }
+.login-form input { min-height:2.8rem;background:#fff;color:#17253a;border-color:#aebdce }
+.login-form button {
+  min-height:2.8rem;
+  background:var(--institution-primary,#1465b8);
+  color:var(--institution-button-text,#fff);
+}
+.login-form :focus-visible { outline-color:var(--institution-link-light,#1465b8) }
+.login-credit { margin-top:1.5rem;font-size:.8rem }
+@media(max-width:680px) {
+  .login-card { grid-template-columns:minmax(0,1fr);grid-template-areas:"identity" "form" }
+  .login-identity,.login-panel { padding:1.75rem 1.25rem }
+  .login-identity .institution-logo { width:3.75rem;height:3.75rem }
+}
 .logo-removal{display:flex;align-items:center;gap:.5rem}.logo-removal input{width:auto;min-height:0}
 .print-institution{display:none}
 :root{
