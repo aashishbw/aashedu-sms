@@ -7,7 +7,7 @@ import { records, display } from "../../../lib/records";
 export async function GET(request: Request,{params}: {params:Promise<{key:string}>}) {
   const user = await currentUser();
   const {key} = await params;
-  if (!user || !Object.hasOwn(catalog,key) || !canRead(user.role,key)) return new Response("Unavailable",{status:404});
+  if (!user || key==="settings" || !Object.hasOwn(catalog,key) || !canRead(user.role,key)) return new Response("Unavailable",{status:404});
   const resource = catalog[key];
   const allowed = listFields(user.role,key);
   const fields = resource.fields.filter(field => (!allowed || allowed.includes(field.name)) && !(key==="leave" && ["STUDENT","TEACHER"].includes(user.role) && ["student","employee"].includes(field.name)));

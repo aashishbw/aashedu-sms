@@ -13,7 +13,7 @@ import { parse, records, validateRecord, RecordError } from "../../lib/records";
 
 export async function save(key: string, id: string | null, archive: boolean, form: FormData) {
   const user = await requireUser();
-  if (!Object.hasOwn(catalog, key) || !canWrite(user.role, key)) throw new Error("Access denied.");
+  if (key==="settings" || !Object.hasOwn(catalog, key) || !canWrite(user.role, key)) throw new Error("Access denied.");
   const path = "/modules/" + key;
   let error: string | undefined;
   try {

@@ -1,3 +1,5 @@
+import { readInstitution } from "../lib/institution";
+import { defaultName } from "../lib/institution-profile";
 import { defaultCurrency, formatMoney } from "../lib/currency";
 import Link from "next/link";
 import { ArrowUpRight, BookOpen, CalendarCheck, CreditCard, GraduationCap, UsersRound, School } from "lucide-react";
@@ -11,7 +13,7 @@ export default async function Overview() {
   const admin = isAdmin(user.role);
   const [announcements, settings] = await Promise.all([
     db.announcement.findMany({ where: { archived: false, sectionId: null }, orderBy: { createdAt: "desc" }, take: 5 }),
-    db.schoolSetting.findFirst({ where: { archived: false } })
+    readInstitution()
   ]);
   const currency = settings?.currency ?? defaultCurrency;
   const format = (value: number) => formatMoney(value, currency);
@@ -41,7 +43,7 @@ export default async function Overview() {
     {label:"Outstanding fees",value:format(outstanding),icon:CreditCard,key:"fees"}
   ] : [];
   return <Shell user={user}>
-    <div className="page-head"><div><p className="eyebrow">{settings?.name ?? "AashEdu School Management System"}</p><h1>School overview</h1><p className="muted">Welcome back, {user.name}.</p></div>
+    <div className="page-head"><div><p className="eyebrow">{settings?.name || defaultName}</p><h1>School overview</h1><p className="muted">Welcome back, {user.name}.</p></div>
       {admin && <Link className="button" href="/modules/students?add=1">New admission <ArrowUpRight size={16}/></Link>}</div>
     {admin && <section className="card"><h2>Management areas</h2>
       <div className="line"><Link href="/modules/students">Student Management</Link></div>
