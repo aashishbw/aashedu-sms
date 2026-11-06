@@ -152,3 +152,39 @@ button.secondary,.button.secondary{background:var(--surface);color:var(--text)}
   .school-metric { padding:.75rem .55rem;gap:.4rem }
   .school-metric-arrow { display:none }
 }
+
+.frame .workspace-sidebar {
+  background:linear-gradient(170deg,#14243d,var(--login-panel,#20365d));
+  color:#e3edfa;
+  border-right:0;
+  scrollbar-width:thin;
+  scrollbar-color:#ffffff38 transparent;
+}
+.workspace-brand { color:#fff;padding:.8rem .6rem;border-bottom:1px solid #ffffff29 }
+.workspace-brand .institution-logo { background:#fff;color:#243568;padding:.35rem }
+.workspace-brand small { display:block;margin-top:.15rem;color:#b8c9e3;font-size:.7rem;letter-spacing:normal;font-weight:500 }
+.workspace-nav > summary { color:#d5e4fa }
+.workspace-nav nav { display:grid;gap:.28rem }
+.workspace-nav-label { margin:1rem .6rem .35rem;color:#adbfdb;font-size:.68rem;font-weight:700;letter-spacing:.13em;text-transform:uppercase }
+.workspace-nav nav a,.workspace-nav-group > summary { color:#e3edfa;min-height:2.55rem;border-radius:.65rem;padding:.55rem .65rem }
+.workspace-nav nav a:hover,.workspace-nav-group > summary:hover { color:#fff;background:#ffffff18 }
+.workspace-nav nav a.active { color:#fff;background:#ffffff28;box-shadow:inset 3px 0 0 var(--login-accent,#9dd6ff) }
+.workspace-nav-group > summary { display:flex;justify-content:flex-start;align-items:center;gap:.55rem;list-style:none }
+.workspace-nav-group > summary::-webkit-details-marker { display:none }
+.workspace-nav-group > summary svg:last-child { margin-left:auto;rotate:-90deg }
+.workspace-nav-group[open] > summary svg:last-child { rotate:0deg }
+.workspace-nav-items { display:grid;gap:.15rem;margin:.2rem 0 .35rem 1rem;padding-left:.5rem;border-left:1px solid #ffffff35 }
+.workspace-nav-items a { font-size:.85rem }
+.workspace-sidebar :focus-visible { outline-color:var(--login-accent,#9dd6ff) }
+.school-hero { box-shadow:0 14px 35px #14274733 }
+.school-hero-date { border:1px solid #ffffff38;border-radius:1rem;background:#ffffff13 }
+.school-metrics { gap:.7rem;background:transparent;border:0 }
+.school-metric { border:1px solid var(--line);border-radius:.95rem;background:var(--surface);box-shadow:0 4px 14px #1427470b }
+.school-metric + .school-metric,.school-metric:nth-child(3),.school-metric:nth-child(n+3) { border:1px solid var(--line) }
+.school-metric .tile-icon { background:var(--soft);color:var(--brand) }
+.school-empty { border-style:dashed;background:color-mix(in srgb,var(--surface) 83%,var(--soft)) }
+@media(max-width:760px) {
+  .workspace-nav nav { max-height:18rem;overflow:auto;align-items:stretch;padding:.4rem .15rem }
+  .workspace-nav nav a { white-space:normal }
+}
+@media print { .frame .workspace-sidebar { display:none } }
