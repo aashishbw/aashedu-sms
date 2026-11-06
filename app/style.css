@@ -188,3 +188,9 @@ button.secondary,.button.secondary{background:var(--surface);color:var(--text)}
   .workspace-nav nav a { white-space:normal }
 }
 @media print { .frame .workspace-sidebar { display:none } }
+
+.school-calendar table { width:100%;max-width:35rem;border-collapse:collapse;table-layout:fixed;text-align:center }
+.school-calendar th,.school-calendar td { padding:.3rem .12rem }
+.school-calendar th { color:var(--muted);font-size:.78rem }
+.school-calendar td span { display:inline-grid;place-items:center;min-width:2rem;min-height:2rem;border-radius:.55rem }
+.school-calendar [aria-current="date"] { background:var(--soft);color:var(--brand);font-weight:750;outline:1px solid currentColor }
