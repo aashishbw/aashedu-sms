@@ -3,7 +3,8 @@ const config:NextConfig={
   poweredByHeader:false,
   agentRules:false,
   distDir:process.env.CAMPUS_DIST_DIR ?? ".next",
-  experimental:{cpus:1,staticGenerationMaxConcurrency:1},
+  serverExternalPackages:["mssql", "sharp"],
+  experimental:{cpus:1,staticGenerationMaxConcurrency:1,serverActions:{bodySizeLimit:"3mb"}},
   async headers(){
     return [{source:"/:path*",headers:[
       {key:"X-Content-Type-Options",value:"nosniff"},
@@ -14,5 +15,6 @@ const config:NextConfig={
   }
 };
 export default config;
+
 
 

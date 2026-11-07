@@ -1,3 +1,4 @@
+import { readInstitution } from "../../../lib/institution";
 import { formatMoney } from "../../../lib/currency";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -21,7 +22,7 @@ export default async function StudentProfile({params}:{params:Promise<{id:string
     db.invoice.findMany({where:{studentId:id},include:{Payment_invoice:true},orderBy:{due:"desc"}}),
     db.grade.findMany({where:{archived:false},orderBy:{minimum:"desc"}})
   ]);
-  const settings=await db.schoolSetting.findFirst({where:{archived:false},select:{currency:true}});
+  const settings=await readInstitution();
   return <Shell user={user} active="students"><div className="page-head"><div><p className="eyebrow">{student.admissionNo}</p><h1>{student.name}</h1><p>{student.status}</p></div><div className="actions"><Link href="/modules/students">Back to students</Link><PrintButton/></div></div>
   <div className="panels"><section className="card"><h2>Contacts</h2><p>Email {display(student.email)}</p><p>Guardian {display(student.guardianName)}</p><p>Emergency phone {display(student.emergencyPhone)}</p></section>
   <section className="card"><h2>Enrollment history</h2>{enrollments.length ? enrollments.map(row=><div className="line" key={row.id}>{row.section.classroom.year.name} · {row.section.classroom.name} · {row.section.name}<span>Roll {row.rollNo}</span></div>):<p>No enrollments.</p>}</section>
@@ -32,6 +33,6 @@ export default async function StudentProfile({params}:{params:Promise<{id:string
   }):<p>No marks recorded.</p>}</section></div>
   <section className="card"><h2>Fee history</h2>{invoices.length ? invoices.map(invoice=>{
     const paid=invoice.Payment_invoice.reduce((sum,payment)=>sum.plus(payment.amount),invoice.amount.minus(invoice.amount));
-    return <div key={invoice.id} className="line"><span>{invoice.reference} · Due {display(invoice.due)}</span><span>Paid {formatMoney(paid.toFixed(2),settings?.currency)} · Balance {formatMoney(invoice.amount.minus(invoice.discount).minus(paid).toFixed(2),settings?.currency)}</span></div>;
+    return <div key={invoice.id} className="line"><span>{invoice.reference} · Due {display(invoice.due)}</span><span>Paid {formatMoney(paid.toFixed(2),settings?.currency ?? undefined)} · Balance {formatMoney(invoice.amount.minus(invoice.discount).minus(paid).toFixed(2),settings?.currency ?? undefined)}</span></div>;
   }):<p>No invoices.</p>}</section></Shell>;
 }

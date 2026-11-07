@@ -1,5 +1,6 @@
 import { formatMoney } from "../../../lib/currency";
-import { db } from "../../../lib/db";
+import { readInstitution } from "../../../lib/institution";
+import { redirect } from "next/navigation";
 import { Prisma } from "@prisma/client";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -20,12 +21,13 @@ export default async function Module({ params, searchParams }: {
   const user = await requireUser();
   const {key} = await params;
   if (!Object.hasOwn(catalog,key) || !canRead(user.role,key)) notFound();
+  if (key==="settings") redirect("/settings/institution");
   const resource = catalog[key];
   const {q, p, add, edit, error, saved, sort, from, to} = await searchParams;
   const path = "/modules/" + key;
   const writable = canWrite(user.role,key);
   const allowed = listFields(user.role,key);
-  const settings=resource.fields.some(field=>field.type==="money") ? await db.schoolSetting.findFirst({where:{archived:false},select:{currency:true}}) : null;
+  const settings=resource.fields.some(field=>field.type==="money") ? await readInstitution() : null;
   const fields = resource.fields.filter(field => !allowed || allowed.includes(field.name));
   const scope = {archived:false,...scopeFor(user,key)};
   const where=filters(user,key,fields,{q,from,to});
@@ -79,9 +81,9 @@ export default async function Module({ params, searchParams }: {
       <label>From<input type="date" name="from" defaultValue={from}/></label><label>Through<input type="date" name="to" defaultValue={to}/></label>
       <button className="secondary"><Search size={16}/> Search</button></form>
       {rows.length > 0 ? <div className="scroll"><table><thead><tr>{visibleFields.map(f=><th scope="col" key={f.name}>{label(f.name)}</th>)}{(key === "students" || key === "homework" || immutable || writable) && <th scope="col">Actions</th>}{key==="payroll" && <th scope="col">Net pay</th>}</tr></thead><tbody>
-        {rows.map(row=><tr key={row.id}>{visibleFields.map(f=><td key={f.name}>{f.target && row[f.name] ? recordName(row[f.name] as typeof row) : f.type==="money" && row[fieldKey(f)]!=null ? formatMoney(new Prisma.Decimal(String(row[fieldKey(f)])).toFixed(2),settings?.currency) : display(row[fieldKey(f)])}</td>)}
+        {rows.map(row=><tr key={row.id}>{visibleFields.map(f=><td key={f.name}>{f.target && row[f.name] ? recordName(row[f.name] as typeof row) : f.type==="money" && row[fieldKey(f)]!=null ? formatMoney(new Prisma.Decimal(String(row[fieldKey(f)])).toFixed(2),settings?.currency ?? undefined) : display(row[fieldKey(f)])}</td>)}
           {(key === "students" || key === "homework" || immutable || writable) && <td><div className="actions">{key === "students" && ["SUPER_ADMIN","SCHOOL_ADMIN","STUDENT","PARENT"].includes(user.role) && <Link href={"/students/" + row.id}>Profile</Link>}{key==="homework" && <Link href={"/homework/"+row.id}>Open</Link>}{immutable && <Link href={"/finance/"+key+"/"+row.id}>{key==="fees"?"Invoice PDF":"Receipt PDF"}</Link>}{writable && !immutable && !(key==="payroll" && row.status==="Paid") && <Link href={path + "?edit=" + row.id}>Edit</Link>}
-          {writable && !reviewer && !immutable && key !== "settings" && key !== "payroll" && <form action={save.bind(null,key,row.id,true)}><Submit text="Archive" confirm/></form>}</div></td>}{key==="payroll" && <td>{formatMoney(new Prisma.Decimal(String(row.base)).plus(String(row.allowances)).minus(String(row.deductions)).toFixed(2),settings?.currency)}</td>}</tr>)}
+          {writable && !reviewer && !immutable && key !== "settings" && key !== "payroll" && <form action={save.bind(null,key,row.id,true)}><Submit text="Archive" confirm/></form>}</div></td>}{key==="payroll" && <td>{formatMoney(new Prisma.Decimal(String(row.base)).plus(String(row.allowances)).minus(String(row.deductions)).toFixed(2),settings?.currency ?? undefined)}</td>}</tr>)}
       </tbody></table></div> : <p className="empty">No records match this view.</p>}
       <div className="pagination">{page > 1 && <Link href={pageLink(page-1)}>Previous</Link>} <span>Page {page}</span> {page * 20 < count && <Link href={pageLink(page+1)}>Next</Link>}</div>
     </section>

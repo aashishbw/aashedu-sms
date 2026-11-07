@@ -30,13 +30,18 @@ export async function login(form: FormData) {
   const expiresAt = new Date(now.getTime() + 8 * 3_600_000);
   const jar = await cookies();
   const previous = jar.get(sessionCookie)?.value;
-  await db.$transaction([
-    db.loginAttempt.deleteMany({ where: { id: digest(email) } }),
-    db.session.deleteMany({ where: previous ? { id: digest(previous) } : { id: "" } }),
-    db.session.create({ data: { id: digest(token), userId: user.id, expiresAt } })
-  ]);
+  const created = await db.$transaction(async tx => {
+    const [account] = await tx.$queryRaw<{id:string}[]>`
+      SELECT id FROM "User" WHERE id = ${user.id} AND password = ${user.password} AND disabled = false FOR UPDATE`;
+    if (!account) return false;
+    await tx.loginAttempt.deleteMany({where:{id:digest(email)}});
+    if (previous) await tx.session.deleteMany({where:{id:digest(previous)}});
+    await tx.session.create({data:{id:digest(token),userId:user.id,expiresAt}});
+    return true;
+  });
+  if (!created) redirect("/login?error=invalid");
   jar.set(sessionCookie, token, { httpOnly: true, secure: process.env.NODE_ENV === "production", sameSite: "lax", path: "/", expires: expiresAt });
-  redirect("/");
+  redirect(password.length < 14 ? "/?changePassword=1" : "/");
 }
 
 export async function logout() {
